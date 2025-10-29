@@ -43,8 +43,9 @@ def fetch_price_history(config: AnalysisConfig) -> pd.DataFrame:
 def compute_returns(price_history: pd.DataFrame) -> pd.DataFrame:
     """Compute daily percentage and cumulative returns from the price history."""
     returns = price_history.copy()
-    returns["daily_return"] = returns["adj_close"].pct_change()
-    returns["cumulative_return"] = (1 + returns["daily_return"]).cumprod() - 1
+    returns["daily_return"] = returns["adj_close"].pct_change().fillna(0.0)
+    growth_factors = 1 + returns["daily_return"]
+    returns["cumulative_return"] = growth_factors.cumprod() - 1
     return returns.dropna()
 
 
